@@ -11,7 +11,8 @@ on:
 jobs:
   build-ipa:
     name: Build unsigned IPA
-    runs-on: macos-15
+    # connectivity_plus ve App Store, iOS 26 SDK'sı (Xcode 26) gerektirir.
+    runs-on: macos-26
     timeout-minutes: 60
 
     steps:
