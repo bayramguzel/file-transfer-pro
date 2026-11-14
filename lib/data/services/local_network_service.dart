@@ -48,18 +48,53 @@ class LocalNetworkService {
 
     // Fallback: enumerate network interfaces
     try {
-      for (final interface in await NetworkInterface.list(
+      final interfaces = await NetworkInterface.list(
         type: InternetAddressType.IPv4,
         includeLinkLocal: false,
-      )) {
-        for (final addr in interface.addresses) {
-          final ip = addr.address;
-          // Skip loopback and APIPA addresses
-          if (!ip.startsWith('127.') && !ip.startsWith('169.254.')) {
-            return ip;
+      );
+
+      // iOS'ta Wi-Fi arayüzü en0, Android'de wlan0'dır. VPN (utun/tun/ppp)
+      // ve hücresel (pdp_ip/rmnet) arayüz adresleri yerel ağdaki diğer
+      // cihazlar tarafından erişilemez, bu yüzden atlanır.
+      bool isUnreachableInterface(String name) {
+        final n = name.toLowerCase();
+        return n.startsWith('utun') ||
+            n.startsWith('tun') ||
+            n.startsWith('tap') ||
+            n.startsWith('ipsec') ||
+            n.startsWith('ppp') ||
+            n.startsWith('pdp_ip') ||
+            n.startsWith('rmnet') ||
+            n.startsWith('clat');
+      }
+
+      bool isWifiLikeInterface(String name) {
+        final n = name.toLowerCase();
+        return n == 'en0' || n.startsWith('wlan') || n.startsWith('en') ||
+            n.startsWith('wi-fi') ||
+            n.startsWith('wifi');
+      }
+
+      String? firstUsableIp({required bool onlyWifiLike}) {
+        for (final interface in interfaces) {
+          if (isUnreachableInterface(interface.name)) continue;
+          if (onlyWifiLike && !isWifiLikeInterface(interface.name)) continue;
+          for (final addr in interface.addresses) {
+            final ip = addr.address;
+            // Skip loopback and APIPA addresses
+            if (!ip.startsWith('127.') && !ip.startsWith('169.254.')) {
+              return ip;
+            }
           }
         }
+        return null;
       }
+
+      final wifiIp = firstUsableIp(onlyWifiLike: true);
+      if (wifiIp != null) return wifiIp;
+
+      final anyIp = firstUsableIp(onlyWifiLike: false);
+      if (anyIp != null) return anyIp;
     } catch (e) {
       print('NetworkInterface fallback error: $e');
     }

@@ -6,7 +6,24 @@ class Helpers {
 
   /// Format bytes to human readable string (e.g., "1.5 MB")
   static String formatBytes(int bytes, {int decimals = 2}) {
-    return _formatBytes(bytes);
+    if (bytes <= 0) return '0 B';
+    if (bytes < 1024) return '$bytes B';
+
+    const units = ['KB', 'MB', 'GB', 'TB'];
+    var size = bytes / 1024;
+    var unitIndex = 0;
+    while (size >= 1024 && unitIndex < units.length - 1) {
+      size /= 1024;
+      unitIndex++;
+    }
+
+    var text = size.toStringAsFixed(decimals);
+    if (text.contains('.')) {
+      text = text
+          .replaceAll(RegExp(r'0+$'), '')
+          .replaceAll(RegExp(r'\.$'), '');
+    }
+    return '$text ${units[unitIndex]}';
   }
 
   /// Generate a random 6-digit transfer code
@@ -112,10 +129,3 @@ class Helpers {
     }
   }
 }
-  
-  String _formatBytes(int bytes) {
-    if (bytes < 1024) return ' B';
-    if (bytes < 1024 * 1024) return ' KB';
-    if (bytes < 1024 * 1024 * 1024) return ' MB';
-    return ' GB';
-  }

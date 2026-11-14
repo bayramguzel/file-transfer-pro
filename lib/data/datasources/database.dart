@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
@@ -143,7 +144,17 @@ class AppDatabase extends _$AppDatabase {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final dbFolder = await getApplicationDocumentsDirectory();
+    // iOS/macOS: Belgeler klasörü Dosyalar uygulamasında kullanıcıya açıktır
+    // (UIFileSharingEnabled). Veritabanının orada durması kullanıcının onu
+    // silmesi/bozması anlamına gelir; bu yüzden uygulama destek klasörü
+    // kullanılır. Android'de mevcut davranış korunur.
+    final Directory dbFolder =
+        (!kIsWeb && (Platform.isIOS || Platform.isMacOS))
+            ? await getApplicationSupportDirectory()
+            : await getApplicationDocumentsDirectory();
+    if (!await dbFolder.exists()) {
+      await dbFolder.create(recursive: true);
+    }
     final file = File(p.join(dbFolder.path, AppConstants.dbName));
     return NativeDatabase(file);
   });

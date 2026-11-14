@@ -14,6 +14,7 @@ import 'core/services/support_service.dart';
 import 'core/services/rating_service.dart';
 import 'core/utils/ad_helper.dart';
 import 'data/datasources/database.dart';
+import 'data/services/notification_service.dart';
 import 'data/repositories/settings_repository.dart';
 import 'data/repositories/transfer_repository.dart';
 import 'l10n/app_localizations.dart';
@@ -45,6 +46,8 @@ void main() async {
     unawaited(AdHelper.initUnityAds());
   }
   unawaited(SupportService().init());
+  // iOS'ta bildirim izni istenmez; eklenti yalnızca hazırlanır.
+  unawaited(NotificationService().init());
 
   // Initialize dependencies
   final prefs = await SharedPreferences.getInstance();

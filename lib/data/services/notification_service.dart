@@ -15,7 +15,18 @@ class NotificationService {
 
   NotificationService._internal();
 
+  bool _initialized = false;
+  bool get isInitialized => _initialized;
+
+  /// Bildirim eklentisini bir kez başlatır.
+  ///
+  /// Sunucu üzerinden dosya alan ekranlar bildirimi doğrudan gösterdiği için
+  /// başlatma burada (çağrı anında) garanti altına alınır; iOS'ta başlatılmamış
+  /// eklentiye bildirim göndermek sessizce kaybolur.
   Future<void> init() async {
+    if (_initialized) return;
+    _initialized = true;
+
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -60,6 +71,7 @@ class NotificationService {
   Future<void> showDownloadCompleteNotification(
       String fileName, String filePath,
       {String? title, String? body}) async {
+    await init();
     await ensureIOSPermissions();
 
     const AndroidNotificationDetails androidNotificationDetails =
@@ -87,6 +99,7 @@ class NotificationService {
 
   Future<void> showProgressNotification(
       int id, String fileName, int progress) async {
+    await init();
     final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       'download_progress_channel',
