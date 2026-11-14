@@ -1,0 +1,6 @@
+"CFBundleDisplayName" = "File Transfer Pro";
+"CFBundleName" = "File Transfer Pro";
+"NSLocalNetworkUsageDescription" = "File Transfer Pro needs local network access to find nearby devices and transfer files directly over Wi-Fi. No data leaves your network.";
+"NSCameraUsageDescription" = "File Transfer Pro uses the camera to scan QR codes for connecting devices and to take a profile photo.";
+"NSPhotoLibraryUsageDescription" = "File Transfer Pro needs access to your photos so you can choose a profile picture and share images.";
+"NSPhotoLibraryAddUsageDescription" = "File Transfer Pro needs permission to save received files to your photo library.";

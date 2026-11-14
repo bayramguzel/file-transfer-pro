@@ -1,0 +1,6 @@
+"CFBundleDisplayName" = "File Transfer Pro";
+"CFBundleName" = "File Transfer Pro";
+"NSLocalNetworkUsageDescription" = "File Transfer Pro'nun yakındaki cihazları bulabilmesi ve dosyaları doğrudan Wi-Fi üzerinden aktarabilmesi için yerel ağ erişimi gerekiyor. Verileriniz ağınızdan dışarı çıkmaz.";
+"NSCameraUsageDescription" = "File Transfer Pro, cihazları bağlamak için QR kod taramak ve profil fotoğrafı çekmek üzere kamerayı kullanır.";
+"NSPhotoLibraryUsageDescription" = "File Transfer Pro'nun profil fotoğrafı seçebilmeniz ve fotoğraf paylaşabilmeniz için fotoğraflarınıza erişmesi gerekiyor.";
+"NSPhotoLibraryAddUsageDescription" = "File Transfer Pro'nun indirilen dosyaları fotoğraf galerinize kaydedebilmesi için izin gerekiyor.";

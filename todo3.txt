@@ -1,0 +1,23 @@
+
+
+TR: "appSubtitle": "Pro Dosya Aktarma"
+EN: "appSubtitle": "File Transfer Pro"
+DE: "appSubtitle": "Pro Dateiübertragung"
+olacak sekilde uygulama isimlerini ve yükleme etiketlerini  yapalim.
+
+***
+splash ekrani sessiz olarak acilsin.
+ayarlar icerisine alinacak dosyalarin klasör yolunu göster kolayca tiklayip acilabilmesini sagla ve hatta dosya alininca bildirim filan ver, bildirime tiklayipda dosyaya ulasabilellim ayrica bu klasör yolunu da degistirebilmeyi sagla.
+web arayüzünde birden fazla dosya yollanmis olsa bile tek tek indirme mecburiyeti var onun yerine toplu indirme imkani saglayalim.
+ayrica tekrardan karsilikli olarak dosyalarin büyüklügüne bakilmadan ayni ag üzerinde sorusnsz sekilde iletildiginden emin olalim.
+bu uygulama icerisindeki evrensel pano kismini bu uygulamadan  ve arayüzden cikarip ayri bir uygulama olarak yapmak istiyorum o yüzden EvrenselPano diye klasör olustur yapay zekanin islerini kolaylastirmak icin suan calisan evrensel Pano kodlarini, bilgileri vs. bir .md dosyasi icerisinde detayli sekilde belirt.
+***
+
+-Herhangi bir veri yolladigimiz bilgisayardan tekrar geri telefona dosya yolladigimizde mümkünse direkt olarak her cihazda yer alan download klasörü icerisine direkt olarak kayit edelim eger buna iznimiz olmaz ise download klasörü icerisine FileTransfer diye klasör olustur onun icine indirelim, tabi bunun icin gerekli olan izinleri isteyelim. Ayrica mümkünse herhangi birsey telefona indirdiysek bildirim gelsin ve on atiklayip dosyanin oldugu yola direkt olarak erisebilelim.
+-Dosya boyutundan bgimsiz sorunsuz oalrak dosya aktabilmeyi sagla, koplmalar asla olmasin.
+-Uygulamayi A kalite haline geirelim ve web arayüzde de yapilabilcek degisiklikler vs. var ise onlarida uygulaayalim ve A kalite bir uygualam oalrak sunalim google playde.
+-android klasörü icerisinde key.properties ve upload-keystore kullanarak google play icin gerekli olan olusturma sistemini kullan.
+  
+uygulama icindeki test admob ID leri kaldirip yerine gercek admob ID leri kullanalim:
+admob app id: ca-app-pub-2100987662328122~7666665233
+  admob banner id: ca-app-pub-2100987662328122/3932144798

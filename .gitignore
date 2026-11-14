@@ -1,0 +1,87 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Imzalama materyalleri ve gizli degerler (public repoya gitmemeli)
+key.properties
+**/key.properties
+*.jks
+*.keystore
+*.p12
+*.mobileprovision
+
+# Derleme ciktilari / yayinlanabilir paketler
+*.apk
+*.aab
+*.ipa
+*.xcarchive
+/ios/Pods/
+/ios/.symlinks/
+/ios/Flutter/ephemeral/
+
+# Yedek ve gecici klasorler
+android.backup/
+.migration_backup/
+.freebuff/
+.claude/
+
+# Yerel derleme/onbellek klasorleri
+/android/.gradle/
+/android/build/
+/android/app/build/
+/android/local.properties
+**/Pods/
+**/.symlinks/
+**/ephemeral/
+packages/*/build/
+packages/*/example/build/
+packages/*/.dart_tool/
+
+# Hata/analiz ciktilari
+hs_err_pid*
+replay_pid*
+analysis_*.txt
+analyze_*.txt
+build_log.txt
