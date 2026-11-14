@@ -1008,4 +1008,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get resuming => 'Aktarım devam ettiriliyor...';
+
+  @override
+  String get iosLocalNetworkHint =>
+      'Diğer cihaz bağlanamıyorsa: Ayarlar > Gizlilik ve Güvenlik > Yerel Ağ bölümünden File Transfer Pro\'ya izin verin.';
+
+  @override
+  String get serverRestarted => 'Paylaşım sunucusu yeniden başlatıldı.';
 }

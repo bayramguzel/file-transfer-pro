@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../data/services/local_network_service.dart';
@@ -13,7 +14,8 @@ class ClipboardPage extends StatefulWidget {
   State<ClipboardPage> createState() => _ClipboardPageState();
 }
 
-class _ClipboardPageState extends State<ClipboardPage> {
+class _ClipboardPageState extends State<ClipboardPage>
+    with WidgetsBindingObserver {
   final TextEditingController _textController = TextEditingController();
   final LocalNetworkService _networkService = LocalNetworkService();
   String? _serverUrl;
@@ -22,6 +24,7 @@ class _ClipboardPageState extends State<ClipboardPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (widget.initialText != null && widget.initialText!.isNotEmpty) {
       _textController.text = widget.initialText!;
       _networkService.clipboardContent = widget.initialText!;
@@ -61,7 +64,19 @@ class _ClipboardPageState extends State<ClipboardPage> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // iOS arka planda sunucuyu kapatır; dönüşte pano paylaşımı yeniden açılır.
+    if (state == AppLifecycleState.resumed &&
+        _isServerRunning &&
+        !_networkService.isRunning) {
+      _startServer();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _networkService.stopServer();
     _textController.dispose();
     super.dispose();
@@ -78,6 +93,9 @@ class _ClipboardPageState extends State<ClipboardPage> {
   }
 
   Future<void> _copyToClipboard() async {
+    if (Platform.isIOS) {
+      HapticFeedback.lightImpact();
+    }
     await Clipboard.setData(ClipboardData(text: _textController.text));
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(

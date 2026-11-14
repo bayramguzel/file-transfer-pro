@@ -1941,6 +1941,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Resuming transfer...'**
   String get resuming;
+
+  /// iosLocalNetworkHint
+  ///
+  /// In en, this message translates to:
+  /// **'If the other device can\'t connect, allow local network access for File Transfer Pro in Settings > Privacy & Security > Local Network.'**
+  String get iosLocalNetworkHint;
+
+  /// serverRestarted
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing server restarted.'**
+  String get serverRestarted;
 }
 
 class _AppLocalizationsDelegate

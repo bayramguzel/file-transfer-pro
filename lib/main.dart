@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -23,6 +25,33 @@ import 'presentation/blocs/settings/settings_event.dart';
 import 'presentation/blocs/settings/settings_state.dart';
 import 'presentation/pages/splash_page.dart';
 import 'presentation/pages/home_page.dart';
+import 'presentation/pages/local_hosting_page.dart';
+
+/// iOS'ta "Ac" ile gelen dosyada paylasim ekranina gitmek icin kullanilir.
+final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+final List<String> _pendingIncomingFiles = [];
+
+void _openIncomingFile(String path) {
+  final navigator = _navigatorKey.currentState;
+  if (navigator == null) {
+    _pendingIncomingFiles.add(path);
+    return;
+  }
+  navigator.push(
+    MaterialPageRoute<void>(
+      builder: (_) => LocalHostingPage(files: [File(path)]),
+    ),
+  );
+}
+
+void _flushPendingIncomingFiles() {
+  if (_pendingIncomingFiles.isEmpty) return;
+  final paths = List<String>.from(_pendingIncomingFiles);
+  _pendingIncomingFiles.clear();
+  for (final path in paths) {
+    _openIncomingFile(path);
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,6 +85,25 @@ void main() async {
   final lastSplash = prefs.getString('last_splash_date');
   final today = DateTime.now().toIso8601String().split('T')[0];
 
+  // iOS: Dosyalar uygulamasindan veya baska bir uygulamadan "Ac" ile gelen
+  // dosya, dogrudan paylasim ekraninda karsilanir.
+  String? initialIncomingFile;
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
+    const incomingChannel = MethodChannel('file_transfer/incoming_file');
+    incomingChannel.setMethodCallHandler((call) async {
+      if (call.method == 'openFile' && call.arguments is String) {
+        _openIncomingFile(call.arguments as String);
+      }
+      return null;
+    });
+    try {
+      initialIncomingFile =
+          await incomingChannel.invokeMethod<String>('getInitialFile');
+    } catch (e) {
+      debugPrint('Error checking incoming file: $e');
+    }
+  }
+
   // Check if opened via sharing or open-with file intent (always bypass splash)
   bool hasSharingIntent = false;
   if (!kIsWeb) {
@@ -65,6 +113,9 @@ void main() async {
     } catch (e) {
       debugPrint('Error checking initial sharing media: $e');
     }
+  }
+  if (initialIncomingFile != null && initialIncomingFile.isNotEmpty) {
+    hasSharingIntent = true;
   }
 
   // Never show splash on web, or when launched via share/open intent, or if already shown today
@@ -84,6 +135,12 @@ void main() async {
     ratingService: ratingService,
     showSplash: showSplash,
   ));
+
+  if (initialIncomingFile != null && initialIncomingFile.isNotEmpty) {
+    _openIncomingFile(initialIncomingFile);
+  }
+  WidgetsBinding.instance
+      .addPostFrameCallback((_) => _flushPendingIncomingFiles());
 }
 
 class FileTransferApp extends StatelessWidget {
@@ -120,6 +177,7 @@ class FileTransferApp extends StatelessWidget {
 
           return MaterialApp(
             title: 'File Transfer',
+            navigatorKey: _navigatorKey,
             debugShowCheckedModeBanner: false,
             theme: AppTheme.getTheme(
               settingsState.themeMode,

@@ -1012,4 +1012,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get resuming => 'Übertragung wird fortgesetzt...';
+
+  @override
+  String get iosLocalNetworkHint =>
+      'Wenn sich das andere Gerät nicht verbinden kann, erlaube File Transfer Pro unter Einstellungen > Datenschutz & Sicherheit > Lokales Netzwerk den Zugriff.';
+
+  @override
+  String get serverRestarted => 'Freigabeserver neu gestartet.';
 }

@@ -429,7 +429,7 @@ class _AppSelectionPageState extends State<AppSelectionPage> {
                                   ),
                                 ],
                               ),
-                              trailing: Checkbox(
+                              trailing: Checkbox.adaptive(
                                 value: isSelected,
                                 activeColor: theme.colorScheme.primary,
                                 onChanged: (value) => _toggleAppSelection(app),

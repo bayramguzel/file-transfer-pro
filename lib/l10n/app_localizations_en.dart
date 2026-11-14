@@ -1009,4 +1009,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resuming => 'Resuming transfer...';
+
+  @override
+  String get iosLocalNetworkHint =>
+      'If the other device can\'t connect, allow local network access for File Transfer Pro in Settings > Privacy & Security > Local Network.';
+
+  @override
+  String get serverRestarted => 'Sharing server restarted.';
 }

@@ -306,5 +306,7 @@
   "clipboardSync": "Pano Paylaşımı",
   "connectedWifi": "Bağlı",
   "notConnected": "Bağlı Değil",
-  "resuming": "Aktarım devam ettiriliyor..."
+  "resuming": "Aktarım devam ettiriliyor...",
+  "iosLocalNetworkHint": "Diğer cihaz bağlanamıyorsa: Ayarlar > Gizlilik ve Güvenlik > Yerel Ağ bölümünden File Transfer Pro'ya izin verin.",
+  "serverRestarted": "Paylaşım sunucusu yeniden başlatıldı."
 }

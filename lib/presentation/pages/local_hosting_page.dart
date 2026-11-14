@@ -5,6 +5,7 @@ import '../../data/models/transfer_file.dart';
 import '../../data/repositories/transfer_repository.dart';
 import 'dart:io';
 import 'dart:math' as math;
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,7 +36,7 @@ class LocalHostingPage extends StatefulWidget {
 }
 
 class _LocalHostingPageState extends State<LocalHostingPage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   final LocalNetworkService _networkService = LocalNetworkService();
   final PermissionService _permissionService = PermissionService();
   late List<File> _hostedFiles;
@@ -47,10 +48,12 @@ class _LocalHostingPageState extends State<LocalHostingPage>
   late AnimationController _pulseController;
   late AnimationController _rotationController;
   late Animation<double> _pulseAnimation;
+  bool _isRestartingServer = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _hostedFiles = List.from(widget.files);
     _generatePin();
     _pulseController = AnimationController(
@@ -75,6 +78,13 @@ class _LocalHostingPageState extends State<LocalHostingPage>
 
   void _setupFileReceivedListener() {
     _networkService.onFileReceived = (fileName, filePath) async {
+      if (!mounted) return;
+
+      // iOS'ta kısa, iOS'ta olmayan platformlarda etkisiz dokunma geri bildirimi.
+      if (Platform.isIOS) {
+        HapticFeedback.mediumImpact();
+      }
+
       // Show local notification
       NotificationService().showDownloadCompleteNotification(
         fileName,
@@ -388,6 +398,9 @@ class _LocalHostingPageState extends State<LocalHostingPage>
 
   void _copyUrl() {
     if (_serverUrl != null) {
+      if (Platform.isIOS) {
+        HapticFeedback.lightImpact();
+      }
       Clipboard.setData(ClipboardData(text: _serverUrl!));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -448,7 +461,76 @@ class _LocalHostingPageState extends State<LocalHostingPage>
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // iOS uygulamayı arka plana alınca ağ sunucusunu askıya alır.
+    // Uygulamaya dönüldüğünde paylaşım sessizce yeniden açılır.
+    if (state == AppLifecycleState.resumed &&
+        _serverUrl != null &&
+        !_networkService.isRunning) {
+      _restartServerAfterBackground();
+    }
+  }
+
+  Future<void> _restartServerAfterBackground() async {
+    if (_isRestartingServer) return;
+    _isRestartingServer = true;
+    try {
+      final ip = await _networkService.getLocalIpAddress();
+      final success = await _networkService.startServer(
+        _hostedFiles,
+        pin: _isPinEnabled ? _pin : null,
+      );
+      if (!mounted) return;
+      setState(() {
+        _serverUrl = success ? _networkService.getServerUrl(ip) : null;
+      });
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.serverRestarted),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } finally {
+      _isRestartingServer = false;
+    }
+  }
+
+  Widget _buildIosLocalNetworkHint(ThemeData theme) {
+    if (!Platform.isIOS) return const SizedBox.shrink();
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: theme.colorScheme.primary.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline_rounded,
+              size: 20, color: theme.colorScheme.primary),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              AppLocalizations.of(context)!.iosLocalNetworkHint,
+              style: theme.textTheme.bodySmall?.copyWith(height: 1.4),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     WakelockPlus.disable();
     _pulseController.dispose();
     _rotationController.dispose();
@@ -639,8 +721,12 @@ class _LocalHostingPageState extends State<LocalHostingPage>
                     : Colors.black.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(Icons.arrow_back_rounded,
-                  size: 20, color: theme.colorScheme.onSurface),
+              child: Icon(
+                  Platform.isIOS
+                      ? CupertinoIcons.back
+                      : Icons.arrow_back_rounded,
+                  size: 20,
+                  color: theme.colorScheme.onSurface),
             ),
             onPressed: _stopSharing,
           ),
@@ -787,6 +873,8 @@ class _LocalHostingPageState extends State<LocalHostingPage>
                     },
                   ),
                   const SizedBox(height: 28),
+
+                  _buildIosLocalNetworkHint(theme),
 
                   if (widget.sharedText != null &&
                       widget.sharedText!.trim().isNotEmpty) ...[
@@ -1037,7 +1125,7 @@ class _LocalHostingPageState extends State<LocalHostingPage>
                                 ),
                               ],
                             ),
-                            Switch(
+                            Switch.adaptive(
                               value: _isPinEnabled,
                               onChanged: (value) {
                                 setState(() {

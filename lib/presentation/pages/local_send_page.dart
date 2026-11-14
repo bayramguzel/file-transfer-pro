@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../widgets/file_picker_widget.dart';
@@ -118,8 +119,12 @@ class _LocalSendPageState extends State<LocalSendPage>
                   : Colors.black.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(Icons.arrow_back_rounded,
-                size: 20, color: theme.colorScheme.onSurface),
+            child: Icon(
+                Platform.isIOS
+                    ? CupertinoIcons.back
+                    : Icons.arrow_back_rounded,
+                size: 20,
+                color: theme.colorScheme.onSurface),
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),

@@ -306,5 +306,9 @@
   "clipboardSync": "Clipboard Sync",
   "connectedWifi": "Connected",
   "notConnected": "Not Connected",
-  "resuming": "Resuming transfer..."
+  "resuming": "Resuming transfer...",
+  "iosLocalNetworkHint": "If the other device can't connect, allow local network access for File Transfer Pro in Settings > Privacy & Security > Local Network.",
+  "@iosLocalNetworkHint": { "description": "iosLocalNetworkHint" },
+  "serverRestarted": "Sharing server restarted.",
+  "@serverRestarted": { "description": "serverRestarted" }
 }

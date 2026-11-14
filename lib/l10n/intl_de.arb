@@ -306,5 +306,7 @@
   "clipboardSync": "Zwischenablage",
   "connectedWifi": "Verbunden",
   "notConnected": "Nicht verbunden",
-  "resuming": "Übertragung wird fortgesetzt..."
+  "resuming": "Übertragung wird fortgesetzt...",
+  "iosLocalNetworkHint": "Wenn sich das andere Gerät nicht verbinden kann, erlaube File Transfer Pro unter Einstellungen > Datenschutz & Sicherheit > Lokales Netzwerk den Zugriff.",
+  "serverRestarted": "Freigabeserver neu gestartet."
 }
